@@ -1,0 +1,55 @@
+CREATE OR REPLACE VIEW industry.analiz_mnogourovneviy AS 
+ SELECT period.id AS period_id, firm_subgroup.id AS firm_subgroup_id, firm_subgroup.name AS firm_subgroup_name, t1.itogo_kvt_ur1, t2.itogo_kvt_ur2, t3.itogo_kvt_ur3, t1.tenge_ur1, t2.tenge_ur2, t3.tenge_ur3, period.nds
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.period ON 1 = 1
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur1, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur1, vedomost.period_id
+      FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 1 OR vedomost.nadbavka_uroven = 1)
+  GROUP BY firm_subgroup.id, vedomost.period_id) t1 ON t1.firm_subgroup_id = firm_subgroup.id AND period.id = t1.period_id
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur2, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur2, vedomost.period_id
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 2 OR vedomost.nadbavka_uroven = 2)
+  GROUP BY firm_subgroup.id, firm_subgroup.name, vedomost.period_id) t2 ON firm_subgroup.id = t2.firm_subgroup_id AND period.id = t2.period_id
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur3, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur3, vedomost.period_id
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 3 OR vedomost.nadbavka_uroven = 3)
+  GROUP BY firm_subgroup.id, firm_subgroup.name, vedomost.period_id) t3 ON firm_subgroup.id = t3.firm_subgroup_id AND period.id = t3.period_id;
+
+ALTER TABLE industry.analiz_mnogourovneviy OWNER TO postgres;
+
+CREATE OR REPLACE VIEW industry.analiz_mnogourovneviy_spisok AS 
+ SELECT period.id AS period_id, firm.is_ip, firm.is_too, firm_subgroup.id AS firm_subgroup_id, firm_subgroup.name AS firm_subgroup_name, t1.itogo_kvt_ur1, t2.itogo_kvt_ur2, t3.itogo_kvt_ur3, t1.tenge_ur1, t2.tenge_ur2, t3.tenge_ur3, period.nds, firm.dogovor, firm.name AS firm_name
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.period ON 1 = 1
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur1, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur1, vedomost.period_id, firm.dogovor, firm.name AS firm_name, firm.id AS firm_id
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 1 OR vedomost.nadbavka_uroven = 1)
+  GROUP BY firm_subgroup.id, firm_subgroup.name, firm.dogovor, firm.name, firm.id, vedomost.period_id) t1 ON t1.firm_subgroup_id = firm_subgroup.id AND period.id = t1.period_id AND firm.id = t1.firm_id
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur2, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur2, vedomost.period_id, firm.dogovor, firm.id AS firm_id, firm.name AS firm_name
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 2 OR vedomost.nadbavka_uroven = 2)
+  GROUP BY firm_subgroup.id, firm_subgroup.name, firm.dogovor, firm.name, firm.id, vedomost.period_id) t2 ON firm_subgroup.id = t2.firm_subgroup_id AND period.id = t2.period_id AND firm.id = t2.firm_id
+   LEFT JOIN ( SELECT firm_subgroup.id AS firm_subgroup_id, sum(vedomost.itogo_kvt) AS itogo_kvt_ur3, sum(vedomost.itogo_kvt * vedomost.tariff_value) AS tenge_ur3, vedomost.period_id, firm.dogovor, firm.id AS firm_id, firm.name AS firm_name
+   FROM industry.firm_subgroup
+   LEFT JOIN industry.firm ON firm_subgroup.id = firm.subgroup_id
+   LEFT JOIN industry.vedomost ON firm.id = vedomost.firm_id
+  WHERE vedomost.tariff_name::text = 'Многоуровневый'::text AND vedomost.tariff_value <> 0::numeric AND (vedomost.pokaz_uroven = 3 OR vedomost.nadbavka_uroven = 3)
+  GROUP BY firm_subgroup.id, firm_subgroup.name, firm.dogovor, firm.name, firm.id, vedomost.period_id) t3 ON firm_subgroup.id = t3.firm_subgroup_id AND period.id = t3.period_id AND firm.id = t3.firm_id
+  WHERE t1.itogo_kvt_ur1 <> 0::numeric OR t2.itogo_kvt_ur2 <> 0::numeric OR t3.itogo_kvt_ur3 <> 0::numeric
+  ORDER BY firm_subgroup.id, firm.dogovor;
+
+ALTER TABLE industry.analiz_mnogourovneviy_spisok OWNER TO postgres;
+
+
+

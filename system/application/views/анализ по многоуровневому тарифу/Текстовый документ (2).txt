@@ -1,0 +1,38 @@
+echo anchor("billing/pre_analiz_mnogourovneviy_spisok","Анализ по многоуровневому тарифу (развернутый)")."<br>";
+echo anchor("billing/pre_analiz_mnogourovneviy","Анализ по многоуровневому тарифу")."<br>"
+
+function pre_analiz_mnogourovneviy_spisok()
+	{
+		$data['period']=$this->db->get("industry.period");
+		$this->left();
+		$this->load->view('pre_analiz_mnogourovneviy_spisok',$data);
+		$this->load->view('right');
+	}
+	
+	function analiz_mnogourovneviy_spisok()
+	{
+		$this->db->where("id",$_POST['period_id']);
+		$data['period']=$this->db->get("industry.period")->row();
+		$data['org']=$this->db->get("industry.org_info")->row();
+		$this->db->where("period_id",$_POST['period_id']);
+		$data['diff']=$this->db->get("industry.analiz_mnogourovneviy_spisok");
+		$this->load->view("reports/analiz_mnogourovneviy_spisok",$data);
+	}
+	
+	function pre_analiz_mnogourovneviy()
+	{
+		$data['period']=$this->db->get("industry.period");
+		$this->left();
+		$this->load->view('pre_analiz_mnogourovneviy',$data);
+		$this->load->view('right');
+	}
+	
+	function analiz_mnogourovneviy()
+	{
+		$this->db->where("id",$_POST['period_id']);
+		$data['period']=$this->db->get("industry.period")->row();
+		$data['org']=$this->db->get("industry.org_info")->row();
+		$this->db->where("period_id",$_POST['period_id']);
+		$data['diff']=$this->db->get("industry.analiz_mnogourovneviy");
+		$this->load->view("reports/analiz_mnogourovneviy",$data);
+	}
