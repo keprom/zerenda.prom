@@ -27,11 +27,15 @@ function index()
 	$this->session->unset_userdata('is_login');
 	echo $this->red('login/billing');
 }
-function billing()
-{
-	$data['logins']=$this->db->get("industry.user");
-	$this->load->view('login/billing',$data);
-}
+
+    function billing()
+    {
+        $this->db->order_by("profa");
+        $data['logins'] = $this->db->get("industry.user");
+        $data['org_name'] = $this->db->get("industry.org_info")->row()->org_name;
+        $this->load->view('login/billing', $data);
+    }
+
 function logining()
 {	
 	$p['id']=$_POST['login'];
