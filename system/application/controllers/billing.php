@@ -330,14 +330,14 @@ class Billing extends Controller
 		
 	}
 
-	function adding_tp()
-	{
-		if (trim($_POST['name'])!=""){
+    function adding_tp()
+    {
+        if (trim($_POST['name'])!=""){
             $_POST['ture_id'] = isset($_POST['ture_id'])? $_POST['ture_id']: 0;
-			$this->db->insert('industry.tp',$_POST);
+            $this->db->insert('industry.tp',$_POST);
         }
-		redirect("billing/tp");
-	}
+        redirect("billing/tp");
+    }
 
 	function banks()
 	{
