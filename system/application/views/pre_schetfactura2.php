@@ -23,6 +23,7 @@ function datetostring($date)
 }
 ?>
 Номер счета фактуры: <input name=number_schet value='' ><br>
+Последний номер счета-фактуры <input type="text" disabled value="<?php echo $max_schet_number; ?>"><br><br>
 Другая дата выдачи: <input name=data_schet value='<?php echo datetostring($r->date) ;?>' > <br><br>
 Условия оплаты по договору: <input name=edit1 value='<?php echo if_then($r->edit1,"договор"); ?>' > <br><br>
 Пункт назначения поставляемых товаров (работ, услуг): 
