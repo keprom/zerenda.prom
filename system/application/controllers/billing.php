@@ -3717,7 +3717,13 @@ function pre_analiz_diff_tarif()
         $data['report'] = $this->db->get("shell.sf_verification")->result();
         $this->load->view("other_reports/sf_verification", $data);
     }
-	
+
+    public function migration()
+    {
+        $data['report'] = $this->db->get("shell.migration")->result();
+        $this->export_to_excel("other_reports/migration", $data,"зерендинский_рэс");
+//        $this->load->view("other_reports/migration", $data);
+    }
 }
 
 ?>
